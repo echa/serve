@@ -27,20 +27,20 @@ Examples below contain defaults values.
 
 ```jsonc
 {
-	"server": {
-		// interface to bind to, env SPANG_SERVER_ADDR
-		"addr": "0.0.0.0",
-		// port number to bind to, env SPANG_SERVER_PORT
-		"port": 8000,
-		// protocol schema, either http or https, env SPANG_SERVER_SCHEME
-		"scheme": "http",
-		// filesystem root directory, env SPANG_SERVER_ROOT
-		"root": "/var/www",
-		// base URL (optional), env SPANG_SERVER_BASE
-		"base": "",
-		// app index file name, env SPANG_SERVER_INDEX
-		"index": "index.html"
-	}
+  "server": {
+    // interface to bind to, env SPANG_SERVER_ADDR
+    "addr": "0.0.0.0",
+    // port number to bind to, env SPANG_SERVER_PORT
+    "port": 8000,
+    // protocol schema, either http or https, env SPANG_SERVER_SCHEME
+    "scheme": "http",
+    // filesystem root directory, env SPANG_SERVER_ROOT
+    "root": "/var/www",
+    // base URL (optional), env SPANG_SERVER_BASE
+    "base": "",
+    // app index file name, env SPANG_SERVER_INDEX
+    "index": "index.html"
+  }
 }
 ```
 
@@ -50,26 +50,26 @@ TLS is optional and will be enabled when you choose `https` as server scheme.
 
 ```jsonc
 {
-	"server": {
-		// server name for SNI (optional), env SPANG_SERVER_NAME
-		"name": "",
-		// TLS minimum version (e.g. 0 for TLSv1.0 to 3 for TLSv1.3), SPANG_SERVER_TLS_MIN_VERSION
-		"tls_min_version": 3,
-		// TLS maximum version (e.g. 0 for TLSv1.0 to 3 for TLSv1.3), SPANG_SERVER_TLS_MAX_VERSION
-		"tls_max_version": 3,
-		// TLS CA as PEM (multi-line strings will be concatenated), SPANG_SERVER_TLS_CA
-		"tls_ca": [],
-		// TLS CA file in PEM format, SPANG_SERVER_TLS_CA_FILE
-		"tls_ca_file": "",
-		// TLS Server Cert in PEM format (multi-line strings will be concatenated), SPANG_SERVER_TLS_CERT
-		"tls_cert": [],
-		// TLS Server Cert file in PEM format, SPANG_SERVER_TLS_CERT_FILE
-		"tls_cert_file": "",
-		// TLS Server Key in PEM format (multi-line strings will be concatenated), SPANG_SERVER_TLS_KEY
-		"tls_key": [],
-		// TLS Server Key file in PEM format, SPANG_SERVER_TLS_KEY_FILE
-		"tls_key_file": ""
-	}
+  "server": {
+    // server name for SNI (optional), env SPANG_SERVER_NAME
+    "name": "",
+    // TLS minimum version (e.g. 0 for TLSv1.0 to 3 for TLSv1.3), SPANG_SERVER_TLS_MIN_VERSION
+    "tls_min_version": 3,
+    // TLS maximum version (e.g. 0 for TLSv1.0 to 3 for TLSv1.3), SPANG_SERVER_TLS_MAX_VERSION
+    "tls_max_version": 3,
+    // TLS CA as PEM (multi-line strings will be concatenated), SPANG_SERVER_TLS_CA
+    "tls_ca": [],
+    // TLS CA file in PEM format, SPANG_SERVER_TLS_CA_FILE
+    "tls_ca_file": "",
+    // TLS Server Cert in PEM format (multi-line strings will be concatenated), SPANG_SERVER_TLS_CERT
+    "tls_cert": [],
+    // TLS Server Cert file in PEM format, SPANG_SERVER_TLS_CERT_FILE
+    "tls_cert_file": "",
+    // TLS Server Key in PEM format (multi-line strings will be concatenated), SPANG_SERVER_TLS_KEY
+    "tls_key": [],
+    // TLS Server Key file in PEM format, SPANG_SERVER_TLS_KEY_FILE
+    "tls_key_file": ""
+  }
 }
 ```
 
@@ -80,18 +80,18 @@ When serving files, `spang` can scan for placeholders and replace them with the 
 This feature is enabled by default. Don't use the same characters for start and end delimiters.
 
 ```jsonc
-	"template": {
-		// enables or disables injection, env SPANG_TEMPLATE_ENABLE
-		"enable": true,
-		// template start delimiter, env SPANG_TEMPLATE_LEFT
-		"left": "[[",
-		// template end delimiter, env SPANG_TEMPLATE_RIGHT
-		"right": "]]",
-		// Go regexp to select files for injection, env SPANG_TEMPLATE_MATCH
-		"match": "\\.(html|js)$",
-		// max file size (helps prevent memory pressure), ebv SPANG_TEMPLATE_MAXSIZE
-		"maxsize": 16777216
-	}
+  "template": {
+    // enables or disables injection, env SPANG_TEMPLATE_ENABLE
+    "enable": true,
+    // template start delimiter, env SPANG_TEMPLATE_LEFT
+    "left": "[[",
+    // template end delimiter, env SPANG_TEMPLATE_RIGHT
+    "right": "]]",
+    // Go regexp to select files for injection, env SPANG_TEMPLATE_MATCH
+    "match": "\\.(html|js)$",
+    // max file size (helps prevent memory pressure), ebv SPANG_TEMPLATE_MAXSIZE
+    "maxsize": 16777216
+  }
 ```
 
 
@@ -119,30 +119,30 @@ index.html
 To control how `spang` returns HTTP cache headers you can specify multiple cache rules. This feature is enabled by default and will allow public caching of all files for 30 seconds.
 
 ```jsonc
-	"cache": {
-		// enables or disabled cache headers, env SPANG_CACHE_ENABLE
-		"enable": true,
-		// set default cache lifetime, env SPANG_CACHE_EXIRES
-		"expires": "30s",
-		// set default cache policy, env SPANG_CACHE_CONTROL
-		"control": "public",
-		// define multiple rules to overwrite the default policy (config file only, NO env!)
-		"rules": [{
-			// specify a regexp to match files, i.e. for all index.html files
-			"regexp": "\\.*index.html$",
-			// send cache-control `max-age=0, no-cache, no-store, must-revalidate`
-			"nocache": true,
-			// do not send cache headers at all
-			"ignore": true
-		},{
-			// specify a regexp to match files, i.e. all asset types
-			"regexp": "\\.(js|css|png|jpg|jpeg|svg|ico|woff|ttf|eot|otf)$",
-			// set a very long expiry time (e.g. 10 years)
-			"expires": "87600h",
-			// set an infinite expiry policy
-			"control": "public, max-age=31536000, immutable",
-		}]
-	}
+  "cache": {
+    // enables or disabled cache headers, env SPANG_CACHE_ENABLE
+    "enable": true,
+    // set default cache lifetime, env SPANG_CACHE_EXIRES
+    "expires": "30s",
+    // set default cache policy, env SPANG_CACHE_CONTROL
+    "control": "public",
+    // define multiple rules to overwrite the default policy (config file only, NO env!)
+    "rules": [{
+      // specify a regexp to match files, i.e. for all index.html files
+      "regexp": "\\.*index.html$",
+      // send cache-control `max-age=0, no-cache, no-store, must-revalidate`
+      "nocache": true,
+      // do not send cache headers at all
+      "ignore": true
+    },{
+      // specify a regexp to match files, i.e. all asset types
+      "regexp": "\\.(js|css|png|jpg|jpeg|svg|ico|woff|ttf|eot|otf)$",
+      // set a very long expiry time (e.g. 10 years)
+      "expires": "87600h",
+      // set an infinite expiry policy
+      "control": "public, max-age=31536000, immutable",
+    }]
+  }
 ```
 
 
@@ -152,9 +152,9 @@ Additional response headers may be added under the `headers` key as key/values. 
 
 ```jsonc
 {
-	"headers": {
-		"key": "value"
-	}
+  "headers": {
+    "key": "value"
+  }
 }
 ```
 
