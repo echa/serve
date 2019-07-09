@@ -25,7 +25,7 @@ Configuration works via a JSON config file (default location is `/etc/spang/conf
 
 Examples below contain defaults values.
 
-```json
+```jsonc
 {
 	"server": {
 		// interface to bind to, env SPANG_SERVER_ADDR
@@ -48,7 +48,7 @@ Examples below contain defaults values.
 
 TLS is optional and will be enabled when you choose `https` as server scheme.
 
-```json
+```jsonc
 {
 	"server": {
 		// server name for SNI (optional), env SPANG_SERVER_NAME
@@ -79,7 +79,7 @@ When serving files, `spang` can scan for placeholders and replace them with the 
 
 This feature is enabled by default. Don't use the same characters for start and end delimiters.
 
-```json
+```jsonc
 	"template": {
 		// enables or disables injection, env SPANG_TEMPLATE_ENABLE
 		"enable": true,
@@ -118,7 +118,7 @@ index.html
 
 To control how `spang` returns HTTP cache headers you can specify multiple cache rules. This feature is enabled by default and will allow public caching of all files for 30 seconds.
 
-```json
+```jsonc
 	"cache": {
 		// enables or disabled cache headers, env SPANG_CACHE_ENABLE
 		"enable": true,
@@ -150,7 +150,7 @@ To control how `spang` returns HTTP cache headers you can specify multiple cache
 
 Additional response headers may be added under the `headers` key as key/values. They will be added to all served files.
 
-```json
+```jsonc
 {
 	"headers": {
 		"key": "value"
