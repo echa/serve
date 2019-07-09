@@ -21,7 +21,7 @@ import (
 	"unicode"
 )
 
-const APP_PREFIX = "SPA"
+const APP_PREFIX = "SPANG"
 
 var (
 	config   = NewConfig()                  // ReadConfig(), Set()

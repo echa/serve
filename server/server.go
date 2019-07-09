@@ -31,10 +31,13 @@ func init() {
 	config.SetDefault("server.port", 8000)
 	config.SetDefault("server.root", ".")
 	config.SetDefault("server.index", "index.html")
-	config.SetDefault("cache.maxsize", int64(16*1024*1024))
 	config.SetDefault("template.enable", true)
 	config.SetDefault("template.left", "[[") // may use {{}}, [[]], <%%> <##>, <<>>
 	config.SetDefault("template.right", "]]")
+	config.SetDefault("template.maxsize", int64(16*1024*1024))
+	config.SetDefault("cache.enable", true)
+	config.SetDefault("cache.expires", 30*time.Second)
+	config.SetDefault("cache.control", "public")
 
 	// start async ID generator
 	idStream = make(chan string, 100)
@@ -63,7 +66,6 @@ type ServerConfig struct {
 
 type CacheConfig struct {
 	Enable  bool
-	MaxSize int64
 	Expires time.Duration
 	Control string
 	Rules   []CacheRule
@@ -73,15 +75,17 @@ type CacheRule struct {
 	Filename string
 	Regexp   *regexp.Regexp
 	Ignore   bool
+	NoCache  bool
 	Expires  time.Duration
 	Control  string
 }
 
 type TemplateConfig struct {
-	Enable bool
-	Match  *regexp.Regexp
-	Left   string
-	Right  string
+	Enable  bool
+	Match   *regexp.Regexp
+	Left    string
+	Right   string
+	MaxSize int64
 }
 
 type SPAServer struct {
@@ -104,14 +108,14 @@ func NewSPAServer() (*SPAServer, error) {
 			CspLog: config.GetString("server.csplog"),
 			Cache: CacheConfig{
 				Enable:  config.GetBool("cache.enable"),
-				MaxSize: config.GetInt64("cache.maxsize"),
 				Expires: config.GetDuration("cache.expires"),
 				Control: config.GetString("cache.control"),
 			},
 			Tpl: TemplateConfig{
-				Enable: config.GetBool("template.enable"),
-				Left:   config.GetString("template.left"),
-				Right:  config.GetString("template.right"),
+				Enable:  config.GetBool("template.enable"),
+				Left:    config.GetString("template.left"),
+				Right:   config.GetString("template.right"),
+				MaxSize: config.GetInt64("cache.maxsize"),
 			},
 		},
 		headers: config.GetStringMap("headers"),
@@ -120,7 +124,7 @@ func NewSPAServer() (*SPAServer, error) {
 	}
 
 	// set max filesize limit
-	MaxFileSize = srv.cfg.Cache.MaxSize
+	MaxFileSize = srv.cfg.Tpl.MaxSize
 
 	// make sure server root exists and is readable
 	if err := CheckDir(srv.cfg.Root); err != nil {
@@ -147,6 +151,7 @@ func NewSPAServer() (*SPAServer, error) {
 		rule := CacheRule{
 			Filename: c.GetString("filename"),
 			Ignore:   c.GetBool("ignore"),
+			NoCache:  c.GetBool("nocache"),
 			Expires:  c.GetDuration("expires"),
 			Control:  c.GetString("control"),
 		}
@@ -292,9 +297,8 @@ func (s *SPAServer) WriteHeaders(w http.ResponseWriter, r *http.Request, f http.
 	h := w.Header()
 
 	// set cache headers based on filename and rules
-	rule := CacheRule{Ignore: true}
 	if s.cfg.Cache.Enable {
-		rule = CacheRule{
+		rule := CacheRule{
 			Expires: s.cfg.Cache.Expires,
 			Control: s.cfg.Cache.Control,
 		}
@@ -310,14 +314,16 @@ func (s *SPAServer) WriteHeaders(w http.ResponseWriter, r *http.Request, f http.
 				break
 			}
 		}
-	}
-	if rule.Ignore {
-		w.Header().Set("Cache-Control", "max-age=0, no-cache, no-store, must-revalidate")
-		w.Header().Set("Pragma", "no-cache")
-		w.Header().Set("Expires", start.Format(http.TimeFormat))
-	} else {
-		w.Header().Set("Cache-Control", rule.Control)
-		w.Header().Set("Expires", start.Add(rule.Expires).Format(http.TimeFormat))
+		if !rule.NoCache {
+			if rule.Ignore {
+				w.Header().Set("Cache-Control", "max-age=0, no-cache, no-store, must-revalidate")
+				w.Header().Set("Pragma", "no-cache")
+				w.Header().Set("Expires", start.Format(http.TimeFormat))
+			} else {
+				w.Header().Set("Cache-Control", rule.Control)
+				w.Header().Set("Expires", start.Add(rule.Expires).Format(http.TimeFormat))
+			}
+		}
 	}
 
 	// set extra headers
