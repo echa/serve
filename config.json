@@ -63,7 +63,6 @@
 		"X-XSS-Protection": "1; mode=block",
 		"Strict-Transport-Security": "max-age=31536000; preload",
 		"X-Frame-Options": "DENY",
-		"Referrer-Policy": "origin-when-cross-origin",
-		"Content-Security-Policy": "default-src 'self'; report-uri /csplog;"
+		"Referrer-Policy": "origin-when-cross-origin"
 	}
 }

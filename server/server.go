@@ -115,7 +115,7 @@ func NewSPAServer() (*SPAServer, error) {
 				Enable:  config.GetBool("template.enable"),
 				Left:    config.GetString("template.left"),
 				Right:   config.GetString("template.right"),
-				MaxSize: config.GetInt64("cache.maxsize"),
+				MaxSize: config.GetInt64("template.maxsize"),
 			},
 		},
 		headers: config.GetStringMap("headers"),
@@ -280,6 +280,8 @@ func (s *SPAServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			}
 			return
+		} else {
+			log.Warnf("Caching file %s failed: %v", name, err)
 		}
 		// don't cache or template-replace files on error (they may be too big to cache)
 	}

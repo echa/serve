@@ -6,11 +6,13 @@ package server
 import (
 	"bytes"
 	"fmt"
+	"github.com/echa/spang/log"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -92,7 +94,9 @@ func (f *CachedFile) Stat() (os.FileInfo, error) {
 func (f *CachedFile) ReplaceTemplates() {
 	buf := bytes.NewBuffer(make([]byte, 0, len(f.buf)))
 	FindAndReplace(f.buf, buf, func(v string) string {
-		return os.Getenv(v)
+		s := os.Getenv(v)
+		log.Debugf("Replacing '%s' with '%s'", v, strings.Repeat("*", len(s)))
+		return s
 	})
 	f.buf = buf.Bytes()
 	f.rd = bytes.NewReader(f.buf)

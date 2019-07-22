@@ -47,7 +47,7 @@ container: | build clean
 release: container
 	@echo $@
 	@echo "Publishing image..."
-	docker login -u $(DOCKER_REGISTRY_USER) -p $(DOCKER_REGISTRY_PASSPHRASE) -e nomail $(REGISTRY)
+	docker login -u $(DOCKER_REGISTRY_USER) -p $(DOCKER_REGISTRY_PASSPHRASE) $(REGISTRY)
 	docker push $(TARGET_IMAGE)
 
 clean:
