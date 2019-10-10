@@ -19,8 +19,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/echa/spang/config"
-	"github.com/echa/spang/log"
+	"github.com/echa/config"
+	"github.com/echa/log"
 )
 
 var idStream chan string
@@ -32,8 +32,8 @@ func init() {
 	config.SetDefault("server.root", ".")
 	config.SetDefault("server.index", "index.html")
 	config.SetDefault("template.enable", true)
-	config.SetDefault("template.left", "[[") // may use {{}}, [[]], <%%> <##>, <<>>
-	config.SetDefault("template.right", "]]")
+	config.SetDefault("template.left", "<[") // may use {{}}, [[]], <%%> <##>, <<>>
+	config.SetDefault("template.right", "]>")
 	config.SetDefault("template.maxsize", int64(16*1024*1024))
 	config.SetDefault("cache.enable", true)
 	config.SetDefault("cache.expires", 30*time.Second)
@@ -331,7 +331,7 @@ func (s *SPAServer) WriteHeaders(w http.ResponseWriter, r *http.Request, f http.
 	// set extra headers
 	rid := r.Header.Get("X-Request-Id")
 	if rid == "" {
-		rid = config.APP_PREFIX + "-" + <-idStream
+		rid = "SV-" + <-idStream
 	}
 	h.Set("X-Request-Id", rid)
 

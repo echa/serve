@@ -1,16 +1,18 @@
 # go-spa build container
 #
-FROM            golang:1.12.6-alpine3.10 as builder
+FROM            golang:alpine as builder
 ARG             BUILD_ID
-LABEL           stage=spang-builder
+LABEL           stage=serve-builder
 LABEL           build=$BUILD_ID
 
-WORKDIR         /go/src/github.com/echa/spang
+WORKDIR         /go/src/github.com/echa/serve
 COPY            . .
-RUN             CGO_ENABLED=0 go build -a -ldflags="-s -w" -o /spang .
+RUN             apk --no-cache add git binutils
+RUN             go mod download
+RUN             CGO_ENABLED=0 go build -a -ldflags="-s -w" -o /serve .
+RUN             strip /serve
 
-
-FROM            alpine:3.10
+FROM            alpine:latest
 MAINTAINER      Alexander Eichhorn <alex@kidtsunami.com>
 
 ARG             BUILD_TARGET
@@ -18,17 +20,17 @@ ARG             BUILD_VERSION
 ARG             BUILD_DATE
 ARG             BUILD_ID=unset
 
-LABEL           SPANG_BUILD_VERSION=$BUILD_VERSION \
-                SPANG_BUILD_ID=$BUILD_ID \
-                SPANG_BUILD_DATE=$BUILD_DATE
+LABEL           SV_BUILD_VERSION=$BUILD_VERSION \
+                SV_BUILD_ID=$BUILD_ID \
+                SV_BUILD_DATE=$BUILD_DATE
 
-ENV             SPANG_BUILD_VERSION=$BUILD_VERSION
-ENV             SPANG_BUILD_ID=$BUILD_ID
-ENV             SPANG_BUILD_DATE=$BUILD_DATE
+ENV             SV_BUILD_VERSION=$BUILD_VERSION
+ENV             SV_BUILD_ID=$BUILD_ID
+ENV             SV_BUILD_DATE=$BUILD_DATE
 
-ENV             SPANG_CONFIG_FILE /etc/spang/config.json
-COPY            config.json /etc/spang/config.json
-COPY            --from=builder /spang /usr/local/bin/spang
+ENV             SV_CONFIG_FILE /etc/serve/config.json
+COPY            config.json /etc/serve/config.json
+COPY            --from=builder /serve /usr/local/bin/serve
 RUN             apk add --no-cache ca-certificates \
 		  	    && addgroup www-data -g 500 \
 			    && adduser -u 500 -D -h /var/www -S -s /sbin/nologin -G www-data www-data
@@ -36,4 +38,4 @@ RUN             apk add --no-cache ca-certificates \
 WORKDIR         /var/www
 USER            www-data
 EXPOSE          8000
-ENTRYPOINT      spang
+ENTRYPOINT      serve

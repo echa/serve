@@ -11,7 +11,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/echa/spang/log"
+	"github.com/echa/log"
 )
 
 var (

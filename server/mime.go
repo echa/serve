@@ -4,7 +4,7 @@
 package server
 
 import (
-	"github.com/echa/spang/log"
+	"github.com/echa/log"
 	"mime"
 )
 

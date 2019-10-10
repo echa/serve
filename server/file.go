@@ -6,7 +6,7 @@ package server
 import (
 	"bytes"
 	"fmt"
-	"github.com/echa/spang/log"
+	"github.com/echa/log"
 	"io"
 	"io/ioutil"
 	"net/http"

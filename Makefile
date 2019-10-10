@@ -1,7 +1,7 @@
 .PHONY: default all build release
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
-ARTIFACT := spang
+ARTIFACT := serve
 FLAVOR ?= alpine
 
 ifdef SPANG_VERSION
@@ -52,4 +52,4 @@ release: container
 
 clean:
 	@echo $@
-	docker image prune --force --filter label=stage=spang-builder --filter label=build=$(BUILD_ID)
+	docker image prune --force --filter label=stage=serve-builder --filter label=build=$(BUILD_ID)

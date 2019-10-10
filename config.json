@@ -4,11 +4,6 @@
 		"flags": "date,time,micro,utc",
 		"filename": "",
 		"filemode": 384,
-		"syslog": {
-			"address": "",
-			"facility": "",
-			"ident": ""
-		},
 		"level": "info"
 	},
 	"server": {
@@ -37,8 +32,8 @@
 	},
 	"template": {
 		"enable": true,
-		"left": "[[",
-		"right": "]]",
+		"left": "<[",
+		"right": "]>",
 		"match": "\\.(html|js)$",
 		"maxsize": 16777216
 	},

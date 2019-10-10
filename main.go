@@ -27,13 +27,13 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/echa/spang/config"
-	"github.com/echa/spang/log"
-	"github.com/echa/spang/server"
+	"github.com/echa/config"
+	"github.com/echa/log"
+	"github.com/echa/serve/server"
 )
 
 var (
-	flags = flag.NewFlagSet("spang", flag.ContinueOnError)
+	flags = flag.NewFlagSet("serve", flag.ContinueOnError)
 	// verbosity levels
 	vquiet  bool
 	verbose bool
@@ -50,7 +50,7 @@ func init() {
 	flags.BoolVar(&vtrace, "t", false, "trace mode")
 
 	// defaults
-	config.SetEnvPrefix(config.APP_PREFIX)
+	config.SetEnvPrefix("SV")
 	config.SetDefault("logging.flags", "date,time")
 	config.SetDefault("logging.backend", "stdout")
 	config.SetDefault("logging.level", "warn")
@@ -60,7 +60,7 @@ func main() {
 	// parse cmdline flags
 	if err := flags.Parse(os.Args[1:]); err != nil {
 		if err == flag.ErrHelp {
-			fmt.Println("SPAng Server")
+			fmt.Println("Simple HTTP Fileserver")
 			flags.PrintDefaults()
 			os.Exit(0)
 		}
