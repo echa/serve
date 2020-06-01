@@ -34,17 +34,17 @@ build:
 	@echo $@
 	@docker build --pull --rm --no-cache --build-arg BUILD_DATE=$(BUILD_DATE) --build-arg BUILD_VERSION=$(BUILD_VERSION) --build-arg BUILD_ID=$(BUILD_ID) -t $(TARGET_IMAGE) .
 
-container: | build clean
+image: | build clean
 	@echo $@
 	@echo
-	@echo "Container image complete. Continue with "
+	@echo "Docker image complete. Continue with "
 	@echo " List:         docker images"
 	@echo " Push:         docker push $(TARGET_IMAGE)"
 	@echo " Inspect:      docker inspect $(ARGET_IMAGE)"
 	@echo " Run:          docker run --rm --name $(ARTIFACT) $(TARGET_IMAGE)"
 	@echo
 
-release: container
+release: image
 	@echo $@
 	@echo "Publishing image..."
 	docker login -u $(DOCKER_REGISTRY_USER) -p $(DOCKER_REGISTRY_PASSPHRASE) $(REGISTRY)

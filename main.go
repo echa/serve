@@ -164,8 +164,8 @@ func serve(ctx context.Context) error {
 		ErrorLog:          log.Log.Logger(),
 	}
 
-	log.Infof("Starting HTTP/SPAng server at %s", s.Addr)
-	log.Infof("Serving SPA from directory %s", config.GetString("server.root"))
+	log.Infof("Starting HTTP server at %s", s.Addr)
+	log.Infof("Serving from directory %s", config.GetString("server.root"))
 	errch := make(chan error)
 	go func() {
 		errch <- s.ListenAndServe()
@@ -174,7 +174,7 @@ func serve(ctx context.Context) error {
 	case err := <-errch:
 		return err
 	case <-ctx.Done():
-		log.Info("Stopping HTTP/SPAng server.")
+		log.Info("Stopping HTTP server.")
 		ctx2, cancel := context.WithCancel(context.Background())
 		if tm := config.GetDuration("server.shutdown_timeout"); tm > 0 {
 			ctx2, cancel = context.WithTimeout(ctx2, tm)

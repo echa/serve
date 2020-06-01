@@ -4,7 +4,7 @@
 		"flags": "date,time,micro,utc",
 		"filename": "",
 		"filemode": 384,
-		"level": "info"
+		"level": "warn"
 	},
 	"server": {
 		"addr": "0.0.0.0",
