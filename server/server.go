@@ -361,6 +361,22 @@ func (s *SPAServer) TryFile(r *http.Request, name string) (http.File, string, er
 		return nil, name, err
 	}
 
+	// try with .html extension if missing
+	if !strings.HasSuffix(name, ".html") {
+		extname := name + ".html"
+		log.Debugf("Try opening file %s", s.cfg.Root+extname)
+		f, err := s.root.Open(extname)
+		if err == nil {
+			fi, _ := f.Stat()
+			if !fi.IsDir() {
+				return f, extname, nil
+			}
+			f.Close()
+		} else if !os.IsNotExist(err) {
+			return nil, extname, err
+		}
+	}
+
 	// try lang-specific *-index.html matches first
 	// en-US,en;q=0.5
 	langs := strings.Split(r.Header.Get("Accept-Language"), ";")[0]

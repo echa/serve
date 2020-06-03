@@ -4,8 +4,8 @@ THIS_FILE := $(lastword $(MAKEFILE_LIST))
 ARTIFACT := serve
 FLAVOR ?= alpine
 
-ifdef SPANG_VERSION
-	BUILD_VERSION := $(SPANG_VERSION)-$(FLAVOR)
+ifdef SERVE_VERSION
+	BUILD_VERSION := $(SERVE_VERSION)-$(FLAVOR)
 endif
 BUILD_VERSION ?= $(shell cat VERSION)-$(FLAVOR)
 BUILD_VERSION ?= $(shell git describe --always --dirty)-$(FLAVOR)
