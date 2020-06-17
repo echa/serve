@@ -243,6 +243,7 @@ func (s *SPAServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			status = http.StatusForbidden
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		default:
+			log.Errorf("Opening file %s: %v", fullname[:32], err)
 			status = http.StatusInternalServerError
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		}
@@ -276,6 +277,7 @@ func (s *SPAServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				status = http.StatusForbidden
 				http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			default:
+				log.Errorf("Caching file %s: %v", fullname[:32], err)
 				status = http.StatusInternalServerError
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			}
