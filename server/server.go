@@ -34,6 +34,7 @@ func init() {
 	config.SetDefault("template.enable", true)
 	config.SetDefault("template.left", "<[") // may use {{}}, [[]], <%%> <##>, <<>>
 	config.SetDefault("template.right", "]>")
+	config.SetDefault("template.maxreplace", 32)
 	config.SetDefault("template.maxsize", int64(16*1024*1024))
 	config.SetDefault("cache.enable", true)
 	config.SetDefault("cache.expires", 30*time.Second)
@@ -81,11 +82,12 @@ type CacheRule struct {
 }
 
 type TemplateConfig struct {
-	Enable  bool
-	Match   *regexp.Regexp
-	Left    string
-	Right   string
-	MaxSize int64
+	Enable     bool
+	Match      *regexp.Regexp
+	Left       string
+	Right      string
+	MaxSize    int64
+	MaxReplace int
 }
 
 type SPAServer struct {
@@ -112,10 +114,11 @@ func NewSPAServer() (*SPAServer, error) {
 				Control: config.GetString("cache.control"),
 			},
 			Tpl: TemplateConfig{
-				Enable:  config.GetBool("template.enable"),
-				Left:    config.GetString("template.left"),
-				Right:   config.GetString("template.right"),
-				MaxSize: config.GetInt64("template.maxsize"),
+				Enable:     config.GetBool("template.enable"),
+				Left:       config.GetString("template.left"),
+				Right:      config.GetString("template.right"),
+				MaxSize:    config.GetInt64("template.maxsize"),
+				MaxReplace: config.GetInt("template.maxreplace"),
 			},
 		},
 		headers: config.GetStringMap("headers"),
@@ -144,6 +147,7 @@ func NewSPAServer() (*SPAServer, error) {
 		}
 		srv.cfg.Tpl.Match = re
 		SetDelims(srv.cfg.Tpl.Left, srv.cfg.Tpl.Right)
+		SetMaxReplace(srv.cfg.Tpl.MaxReplace)
 	}
 
 	// parse cache config rules

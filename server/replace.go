@@ -11,11 +11,16 @@ import (
 var (
 	startDelim = []byte("[[")
 	endDelim   = []byte("]]")
+	maxReplace = 32
 )
 
 func SetDelims(start, end string) {
 	startDelim = []byte(start)
 	endDelim = []byte(end)
+}
+
+func SetMaxReplace(size int) {
+	maxReplace = size
 }
 
 func FindTemplates(buf []byte) (locs []int) {
@@ -39,6 +44,10 @@ func FindTemplates(buf []byte) (locs []int) {
 			break
 		}
 		end = found + start + len(endDelim)
+
+		if end-start > maxReplace {
+			continue
+		}
 
 		locs = append(locs, start, end)
 		i = end

@@ -34,6 +34,7 @@
 		"enable": true,
 		"left": "<[",
 		"right": "]>",
+		"maxreplace": 32,
 		"match": "\\.(html|js)$",
 		"maxsize": 16777216
 	},
