@@ -5,6 +5,7 @@ package server
 
 import (
 	"bytes"
+	"github.com/echa/log"
 	"io"
 )
 
@@ -46,6 +47,7 @@ func FindTemplates(buf []byte) (locs []int) {
 		end = found + start + len(endDelim)
 
 		if end-start > maxReplace {
+			log.Warnf("Skipping %d byte template string '%s'", end-start, buf[start:start+maxReplace])
 			continue
 		}
 
