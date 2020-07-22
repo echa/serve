@@ -322,8 +322,8 @@ func (s *SPAServer) WriteHeaders(w http.ResponseWriter, r *http.Request, f http.
 				break
 			}
 		}
-		if !rule.NoCache {
-			if rule.Ignore {
+		if !rule.Ignore {
+			if rule.NoCache {
 				w.Header().Set("Cache-Control", "max-age=0, no-cache, no-store, must-revalidate")
 				w.Header().Set("Pragma", "no-cache")
 				w.Header().Set("Expires", start.Format(http.TimeFormat))
