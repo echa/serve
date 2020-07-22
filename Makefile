@@ -7,7 +7,6 @@ FLAVOR ?= alpine
 ifdef SERVE_VERSION
 	BUILD_VERSION := $(SERVE_VERSION)-$(FLAVOR)
 endif
-BUILD_VERSION ?= $(shell cat VERSION)-$(FLAVOR)
 BUILD_VERSION ?= $(shell git describe --always --dirty)-$(FLAVOR)
 BUILD_DATE := $(shell date -u "+%Y-%m-%dT%H:%M:%SZ")
 ifndef BUILD_ID
