@@ -1,4 +1,6 @@
 github.com/echa/config v1.0.0 h1:UEweIJXfAsShbJUHzGmDtePvMAlk2BDrlAufxPqAk+E=
 github.com/echa/config v1.0.0/go.mod h1:h3cZdL8TqIKrYMO/R+aJp/Usc3/8rZsfzN1rWDuyPhU=
+github.com/echa/config v1.0.1 h1:AXbZ0DcLVNX2zYikW1puelFyQhPn4+YqrexGcnss3ZY=
+github.com/echa/config v1.0.1/go.mod h1:h3cZdL8TqIKrYMO/R+aJp/Usc3/8rZsfzN1rWDuyPhU=
 github.com/echa/log v1.0.0 h1:n+UtYusbs13m8E9FG8RWGC74agi5/oYTO9naI6aNQkE=
 github.com/echa/log v1.0.0/go.mod h1:V8lWE4YGcwDdg0IPBqDQ9eWp2MdsMHfvHpSjaIp4+VQ=
