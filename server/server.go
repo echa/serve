@@ -1,4 +1,4 @@
-// Copyright (c) 2019 KIDTSUNAMI
+// Copyright (c) 2019-2020 KIDTSUNAMI
 // Author: alex@kidtsunami.com
 
 package server
@@ -368,8 +368,13 @@ func (s *SPAServer) TryFile(r *http.Request, name string) (http.File, string, er
 	}
 
 	// try with .html extension if missing
-	if !strings.HasSuffix(name, ".html") {
+	if !strings.HasSuffix(name, "/") && !strings.HasSuffix(name, ".html") {
 		extname := name + ".html"
+		log.Debugf("Try cache lookup for file %s", s.cfg.Root+extname)
+		f, ok := s.cache[extname]
+		if ok {
+			return f, extname, nil
+		}
 		log.Debugf("Try opening file %s", s.cfg.Root+extname)
 		f, err := s.root.Open(extname)
 		if err == nil {
@@ -383,33 +388,56 @@ func (s *SPAServer) TryFile(r *http.Request, name string) (http.File, string, er
 		}
 	}
 
-	// try lang-specific *-index.html matches first
-	// en-US,en;q=0.5
-	langs := strings.Split(r.Header.Get("Accept-Language"), ";")[0]
-	if len(langs) > 0 {
-		for _, v := range strings.Split(langs, ",") {
-			v = strings.ToLower(strings.TrimSpace(v))
-			name := "/" + v + "-" + s.cfg.Index
-			log.Debugf("Try cache lookup for file %s", s.cfg.Root+name)
-			f, ok := s.cache[name]
-			if ok {
-				return f, name, nil
-			}
-			log.Debugf("Try opening file %s", s.cfg.Root+name)
-			f, err = s.root.Open(name)
-			if err == nil {
-				fi, _ := f.Stat()
-				if !fi.IsDir() {
+	// try index file lookups from the current directory upwards
+	segments := strings.Split(name, "/")
+	for i := len(segments); i > 0; i-- {
+		path := strings.Join(segments[0:i], "/")
+		// try lang-specific *-index.html matches first
+		// en-US,en;q=0.5
+		langs := strings.Split(r.Header.Get("Accept-Language"), ";")[0]
+		if len(langs) > 0 {
+			for _, v := range strings.Split(langs, ",") {
+				v = strings.ToLower(strings.TrimSpace(v))
+				name = path + "/" + v + "-" + s.cfg.Index
+				log.Debugf("Try cache lookup for file %s", s.cfg.Root+name)
+				f, ok := s.cache[name]
+				if ok {
 					return f, name, nil
 				}
-				f.Close()
-			} else if !os.IsNotExist(err) {
-				return nil, name, err
+				log.Debugf("Try opening file %s", s.cfg.Root+name)
+				f, err = s.root.Open(name)
+				if err == nil {
+					fi, _ := f.Stat()
+					if !fi.IsDir() {
+						return f, name, nil
+					}
+					f.Close()
+				} else if !os.IsNotExist(err) {
+					return nil, name, err
+				}
 			}
+		}
+		// try index.html
+		name = path + "/" + s.cfg.Index
+		log.Debugf("Try cache lookup for file %s", s.cfg.Root+name)
+		f, ok = s.cache[name]
+		if ok {
+			return f, name, nil
+		}
+		log.Debugf("Try opening file %s", s.cfg.Root+name)
+		f, err = s.root.Open(name)
+		if err == nil {
+			fi, _ := f.Stat()
+			if !fi.IsDir() {
+				return f, name, nil
+			}
+			f.Close()
+		} else if !os.IsNotExist(err) {
+			return nil, name, err
 		}
 	}
 
-	// fallback to index.html
+	// fallback to root index.html
 	name = "/" + s.cfg.Index
 	log.Debugf("Try cache lookup for file %s", s.cfg.Root+name)
 	f, ok = s.cache[name]

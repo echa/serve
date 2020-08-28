@@ -65,6 +65,18 @@ func NewCachedFile(f http.File) (*CachedFile, error) {
 	return &CachedFile{buf: buf, rd: bytes.NewReader(buf), fi: NewCachedFileInfo(fi)}, nil
 }
 
+func NewCachedBuffer(name string, buf []byte) (*CachedFile, error) {
+	if int64(len(buf)) > MaxFileSize {
+		return nil, io.ErrShortBuffer
+	}
+	return &CachedFile{buf: buf, rd: bytes.NewReader(buf), fi: &CachedFileInfo{
+		name:    name,
+		size:    int64(len(buf)),
+		mode:    0444,
+		modtime: time.Now().UTC(),
+	}}, nil
+}
+
 func IsCached(f http.File) bool {
 	_, ok := f.(*CachedFile)
 	return ok

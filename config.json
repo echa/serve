@@ -49,7 +49,7 @@
 			"filename": "service-worker.js",
 			"nocache": true
 		},{
-			"regexp": "\\.(js|css|png|jpg|jpeg|svg|ico|woff|ttf|eot|otf)$",
+			"regexp": "\\.(js|css|png|jpg|jpeg|svg|ico|woff|woff2|ttf|eot|otf)$",
 			"expires": "87600h",
 			"control": "public, max-age=31536000, immutable"
 		}]
